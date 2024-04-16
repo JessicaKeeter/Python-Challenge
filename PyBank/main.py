@@ -2,13 +2,14 @@
 import os
 import csv
 
-csv_path = "C:/Users/Student/OneDrive/Desktop/Start_code.zip/Starter_Code/PyBank/Resources"
-
+csv_path = "PyBank\\Resources\\budget_data.csv"
 
 
 #open csv
-with open(csv_path, mode = 'r') as csvfile:
-    csvreader =csv.reader(csvfile)
+csvfile = open(csv_path, mode = 'r')
+csvreader =csv.reader(csvfile)
 
-    for row in csvreader:
-        print(row) 
+for row in csvreader:
+      print(row)
+
+      
