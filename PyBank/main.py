@@ -9,42 +9,39 @@ def average(numbers):
 profits = []
 months = 0
 revchange = []
-revaverage = 0
-greatestincrease = {"date": "", "amount": float("-inf")}
-greatestdecrease = {"date": "", "amount": float("inf")}
 prevprofitloss = None
+greatestincrease = {"Date": "", "Profit/Losses": 0}
+greatestdecrease = {"Date": "", "Profit/Losses": 0}
 
 # Open csv
 with open(csv_path, 'r') as file:
     csvreader = csv.DictReader(file)
-    next(csvreader) 
-
+    
     # Read rows in data
     for row in csvreader:
-        profits.append(int(row['Profit/Losses']))
+        currentloss = int(row["Profit/Losses"])
+        profits.append(currentloss)
         months += 1
         
         # Calculate change in profit/losses
-        profitloss = int(row['Profit/Losses'])
         if prevprofitloss is not None:
-            change = profitloss - prevprofitloss
+            change = currentloss - prevprofitloss
             revchange.append(change)
         
-        prevprofitloss = profitloss
+            # Calculate greatest increase and decrease
+            if len(revchange) >= 2:  
+                if change > greatestincrease["Profit/Losses"]:
+                    greatestincrease["Date"] = row["Date"]
+                    greatestincrease["Profit/Losses"] = change
+                
+                if change < greatestdecrease["Profit/Losses"]:
+                    greatestdecrease["Date"] = row["Date"]
+                    greatestdecrease["Profit/Losses"] = change
+        
+        prevprofitloss = currentloss  
 
-    # Average of revchange
-    revaverage = average(revchange) if revchange else 0
-
-    # Calculate greatest increase and decrease
-    if revchange:  # Check if revchange is not empty
-        for change, row in zip(revchange, csvreader):
-            if change > greatestincrease["amount"]:
-                greatestincrease['date'] = row['Date']
-                greatestincrease["amount"] = change
-
-            if change < greatestdecrease["amount"]:
-                greatestdecrease['date'] = row['Date']
-                greatestdecrease["amount"] = change
+# Average of revchange
+revaverage = average(revchange) 
 
 # Print
 print("Financial Analysis")
@@ -52,8 +49,8 @@ print("-----------------------------------")
 print(f"Total Months: {months}")
 print(f"Total: ${sum(profits)}")
 print(f"Average Change: ${revaverage:.2f}")
-print(f"Greatest Increase in Profits: {greatestincrease['date']} (${greatestincrease['amount']})")
-print(f"Greatest Decrease in Profits: {greatestdecrease['date']} (${greatestdecrease['amount']})")
+print(f"Greatest Increase in Profits: {greatestincrease['Date']} (${greatestincrease['Profit/Losses']})")
+print(f"Greatest Decrease in Profits: {greatestdecrease['Date']} (${greatestdecrease['Profit/Losses']})")
 
 # Write to text file
 with open("output.txt", "w") as file:
@@ -62,5 +59,5 @@ with open("output.txt", "w") as file:
     file.write(f"Total Months: {months}\n")
     file.write(f"Total: ${sum(profits)}\n")
     file.write(f"Average Change: ${revaverage:.2f}\n")
-    file.write(f"Greatest Increase in Profits: {greatestincrease['date']} (${greatestincrease['amount']})\n")
-    file.write(f"Greatest Decrease in Profits: {greatestdecrease['date']} (${greatestdecrease['amount']})\n")
+    file.write(f"Greatest Increase in Profits: {greatestincrease['Date']} (${greatestincrease['Profit/Losses']})\n")
+    file.write(f"Greatest Decrease in Profits: {greatestdecrease['Date']} (${greatestdecrease['Profit/Losses']})\n")
